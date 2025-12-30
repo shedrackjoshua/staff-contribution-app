@@ -8,6 +8,18 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
+// serve frontend production build if present
+const path = require('path')
+const fs = require('fs')
+const distPath = path.join(__dirname, '..', 'dist')
+if (fs.existsSync(distPath)) {
+    app.use(express.static(distPath))
+    // serve index.html for any other routes (single page app)
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(distPath, 'index.html'))
+    })
+}
+
 //connect to MongoDB
 mongoose.connect('mongodb+srv://Joshua:Marine234@nodetutorial.wexlxdy.mongodb.net/staffcontributionDB?appName=nodetutorial').then(() => {
     console.log('Connected to MongoDB');
